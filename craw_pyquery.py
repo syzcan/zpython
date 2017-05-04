@@ -29,7 +29,7 @@ def craw_detail(craw_url,extFields):
 	content = response.text
 	doc = pq(content)
  		
- 	return parse_ext(craw_url,doc('body'),extFields) 	
+ 	return parse_ext(craw_url,doc,extFields) 	
 
 '''
 解析扩展字段
