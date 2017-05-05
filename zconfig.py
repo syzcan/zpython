@@ -5,5 +5,5 @@ configs = {
 	"port":3306, 
 	"user":"root", 
 	"password":"Zong", 
-	"database":"test00"
+	"database":"zpython"
 }

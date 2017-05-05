@@ -25,8 +25,11 @@ extFields = [url_rule,title_rule]
 
 # 控制台回车解析下一页
 while True:
-	cmd = raw_input("Enter craw nextpage [exit to quit]:")
+	cmd = raw_input("Enter craw ["+craw_url+"]:")
 	if cmd == '':
+		if craw_url == '':
+			print 'there is no next page'
+			break
 		datas,craw_url = craw_pyquery.craw_list(craw_url,craw_item,craw_next,extFields)
 		count = 1
 		for data in datas:
