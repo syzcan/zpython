@@ -6,8 +6,13 @@ import re
 # from mysql.connector import FieldType
 reload(sys) 
 sys.setdefaultencoding('utf8') 
+from zconfig import configs
 
-cnx = mysql.connector.connect(host='127.0.0.1', port=3306, user='root', password='Zong', database='test')
+cnx = None
+try:
+	mysql.connector.connect(host=configs['host'], port=configs['port'], user=configs['user'], password=configs['password'], database=configs['database'])
+except Exception,e:
+	print "mysql connect error:",e
 
 def insert(table,data):
 	cursor = cnx.cursor()
