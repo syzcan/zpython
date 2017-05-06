@@ -10,7 +10,7 @@ from zconfig import configs
 
 cnx = None
 try:
-	mysql.connector.connect(host=configs['host'], port=configs['port'], user=configs['user'], password=configs['password'], database=configs['database'])
+	cnx = mysql.connector.connect(host=configs['host'], port=configs['port'], user=configs['user'], password=configs['password'], database=configs['database'])
 except Exception,e:
 	print "mysql connect error:",e
 

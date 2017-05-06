@@ -11,7 +11,7 @@ def craw_list(craw_url,craw_item,craw_next,craw_store,extFields):
 
 	for data in datas:
 		save_data(craw_store,data)
-	print craw_next	
+	return (datas,craw_next)
 
 def craw_detail(craw_url,craw_store,extFields):
 	data = craw_pyquery.craw_detail(craw_url,extFields)

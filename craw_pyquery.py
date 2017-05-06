@@ -6,12 +6,25 @@ sys.setdefaultencoding('utf8')
 import re
 import requests
 from pyquery import PyQuery as pq
-
+# 设置头部防止403
+headers = {"User-Agent":"Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/55.0.2883.87 Safari/537.36"}
+# 请求数据，最多3次
+def request_get(craw_url):
+	count = 1
+	while True:
+		try:
+			response = requests.get(craw_url,headers=headers)
+			return response
+		except Exception,e:
+			if count>3:
+				raise Exception("false to request["+craw_url+"] "+str(e))
+				break
+			count += 1
 '''
 解析列表页面
 '''
 def craw_list(craw_url,craw_item,craw_next,extFields):
-	response = requests.get(craw_url)
+	response = request_get(craw_url)
 	content = response.text
 	doc = pq(content)
  	
@@ -25,7 +38,7 @@ def craw_list(craw_url,craw_item,craw_next,extFields):
  	if craw_next !=None and craw_next != "":
  		if craw_next['rule_ext_type'].startswith('url'):
  			rule_ext_reg = ''
- 			m = re.compile('\[(.*)\]').search(craw_next['rule_ext_type'])
+ 			m = re.compile(r'\[(.*)\]').search(craw_next['rule_ext_type'])
  			if m:
  				rule_ext_reg = m.group(1)
  			if rule_ext_reg != '':
@@ -42,7 +55,7 @@ def craw_list(craw_url,craw_item,craw_next,extFields):
 解析详情页面
 '''
 def craw_detail(craw_url,extFields):
-	response = requests.get(craw_url)
+	response = request_get(craw_url)
 	content = response.text
 	doc = pq(content)
  		
@@ -60,7 +73,7 @@ def parse_ext(craw_url,item,extFields):
 		if items.length > 0:
 			rule_ext_type = ext['rule_ext_type']
 			rule_ext_reg = ''
- 			m = re.compile('\[(.*)\]').search(rule_ext_type)
+ 			m = re.compile(r'\[(.*)\]').search(rule_ext_type)
 			if m:
 				rule_ext_type = rule_ext_type.replace(m.group(0),'')
 				rule_ext_reg = m.group(1)
@@ -68,21 +81,21 @@ def parse_ext(craw_url,item,extFields):
 			if rule_ext_type == 'text':
 				if ext['rule_ext_mode'] == 'array':
 					val = []
-	 				for i in range(0,items.length):
+	 				for i in range(items.length):
 	 					val.append(items.eq(i).text())
 				else:	
 					val = items.eq(0).text()
 			elif rule_ext_type == 'html':
 				if ext['rule_ext_mode'] == 'array':
 					val = []
-	 				for i in range(0,items.length):
+	 				for i in range(items.length):
 	 					val.append(items.eq(i).html())
 				else:	
 					val = items.eq(0).html()
 	 		elif rule_ext_type == 'attr':
 	 			if ext['rule_ext_mode'] == 'array':
 	 				val = []
-	 				for i in range(0,items.length):
+	 				for i in range(items.length):
 	 					v = items.eq(i).attr(ext['rule_ext_attr'])
 	 					if ext['rule_ext_attr'] == 'href' or ext['rule_ext_attr'] == 'src':
 	 						v = deal_link(craw_url,v)	
@@ -104,6 +117,8 @@ def parse_ext(craw_url,item,extFields):
 		 			m = re.compile(rule_ext_reg).search(val)			
 		 			if m:
 		 				val = m.group(len(m.groups()))
+		 			else:
+		 				val = '' 	
  		data[key] = val
  	return data		
 
