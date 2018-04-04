@@ -18,6 +18,7 @@ def request_get(craw_url,headers=None,cookies=None):
 	while True:
 		try:
 			response = requests.get(craw_url,headers=headers,cookies=cookies)
+			response.encoding = response.apparent_encoding
 			return response
 		except Exception,e:
 			if count>3:
